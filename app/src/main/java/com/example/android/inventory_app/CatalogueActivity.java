@@ -148,7 +148,8 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
         String[] projection = {
                 InventoryTable._ID,
                 InventoryTable.COLUMN_PRODUCT_NAME,
-                InventoryTable.COLUMN_SUPPLIER_NAME };
+                InventoryTable.COLUMN_PRODUCT_PRICE,
+                InventoryTable.COLUMN_PRODUCT_QUANTITY };
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,

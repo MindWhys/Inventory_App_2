@@ -1,9 +1,11 @@
 package com.example.android.inventory_app;
 
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
@@ -21,7 +24,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.android.inventory_app.data.InventoryContract.InventoryTable;
@@ -46,6 +51,12 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     /** EditText field to enter the product's price */
     private EditText productPriceEditText;
 
+    /** Button to increase the number of products */
+    private Button buyButton;
+
+    /** Button to decrease the number of products */
+    private Button sellButton;
+
     /** EditText field to enter the quantity of products */
     private EditText productQuantityEditText;
 
@@ -58,6 +69,12 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     /** Boolean flag that keeps track of whether the item has been edited (true) or not (false) */
     private boolean mItemHasChanged = false;
 
+    public int number = 1;
+
+    ImageButton supplierCallButton;
+    private static final int REQUEST_CALL = 1;
+
+
     /**
      * OnTouchListener that listens for any user touches on a View, implying that they are modifying
      * the view, and we change the mItemHasChanged boolean to true.
@@ -69,6 +86,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             return false;
         }
     };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,18 +120,64 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         // Find all the relevant views that we will need to read user input from
         productNameEditText = findViewById(R.id.edit_product_name);
         productPriceEditText = findViewById(R.id.edit_price);
+
+        buyButton = findViewById(R.id.buy);
         productQuantityEditText = findViewById(R.id.edit_quantity);
+        sellButton = findViewById(R.id.edit_sell);
+
         supplierNameEditText = findViewById(R.id.edit_supplier_name);
         supplierPhoneNumberEditText = findViewById(R.id.edit_supplier_phone_number);
+
 
         // Setup OnTouchListeners on all the input fields, so we can determine if the user
         // has touched or modified them.  This will let us know if there are unsaved changes
         // or not, if the user tries to leave the editor without saving.
         productNameEditText.setOnTouchListener(mTouchListener);
         productPriceEditText.setOnTouchListener(mTouchListener);
+
+        buyButton.setOnTouchListener(mTouchListener);
         productQuantityEditText.setOnTouchListener(mTouchListener);
+        sellButton.setOnTouchListener(mTouchListener);
+
         supplierNameEditText.setOnTouchListener(mTouchListener);
         supplierPhoneNumberEditText.setOnTouchListener(mTouchListener);
+
+        buyButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                productQuantityEditText.setText("" + number++);
+            }
+        });
+
+        sellButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (number >= 1){
+                    productQuantityEditText.setText("" + number--);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No items in stock", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        supplierCallButton = findViewById(R.id.phone);
+        supplierCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String supplierPhoneNumber = supplierPhoneNumberEditText.getText().toString();
+                        Intent supplierCallIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + supplierPhoneNumber));
+                if (ContextCompat.checkSelfPermission(EditorActivity.this,
+                        Manifest.permission.CALL_PHONE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    android.support.v4.app.ActivityCompat.requestPermissions
+                            (EditorActivity.this, new String[]{
+                                    Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                } else {
+                    startActivity(supplierCallIntent);
+                }
+            }
+        });
     }
 
     /**
@@ -423,7 +488,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // content URI already identifies the pet that we want.
             int rowsDeleted = getContentResolver().delete(mCurrentItemUri, null, null);
 
-            // Show a toast message dependiong on whether or not the delete was successful.
+            // Show a toast message depending on whether or not the delete was successful.
             if (rowsDeleted == 0) {
                 // If no rows were deleted, then there was an error with the delete.
                 Toast.makeText(this, getString(R.string.editor_delete_item_failed), Toast.LENGTH_SHORT).show();
