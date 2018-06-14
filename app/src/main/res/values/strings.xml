@@ -1,0 +1,85 @@
+<resources>
+    <!-- Name for the application [CHAR LIMIT=12] -->
+    <string name="app_name">Inventory App</string>
+
+    <!-- Label for overflow menu option that inserts fake inventory data into the app [CHAR LIMIT=20] -->
+    <string name="action_insert_dummy_data">Insert Dummy Data</string>
+
+    <!-- Label for overflow menu option that deletes all pet data into the app [CHAR LIMIT=20] -->
+    <string name="action_delete_all_entries">Delete All Entries</string>
+
+    <!-- Title for the activity to add a new entry [CHAR LIMIT=20] -->
+    <string name="editor_activity_title_new_entry">Add an Entry</string>
+
+    <!-- Label for the editor menu option to save entry and leave editor [CHAR LIMIT=20] -->
+    <string name="action_save">Save</string>
+
+    <!-- Label for the editor overflow menu option that deletes the current pet [CHAR LIMIT=20 -->
+    <string name="action_delete">Delete</string>
+
+    <!-- Label for the overview category of attributes in the editor [CHAR LIMIT=30] -->
+    <string name="category_overview">Overview</string>
+
+    <!-- Hint for Product Name in the editor [CHAR LIMIT=30] -->
+    <string name="hint_product_name">Product Name</string>
+
+    <!-- Hint for Price in the editor {CHAR LIMIT=30] -->
+    <string name="hint_price">Price</string>
+
+    <!-- Hint for the Quantity in the editor [CHAR LIMIT=30] -->
+    <string name="hint_quantity">Quantity</string>
+
+    <!-- Hint for the Supplier Name in the editor [CHAR LIMIT=30] -->
+    <string name="Hint_supplier_name">Supplier Name</string>
+
+    <!-- Hint for the Supplier Phone Number in the editor [CHAR LIMIT=30] -->
+    <string name="Hint_supplier_phone_number">Supplier Phone Number</string>
+
+    <!-- Toast message in editor when new pet has been successfully inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_insert_item_successful">Item saved</string>
+
+    <!-- Toast message in editor when new item has failed to be inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_insert_item_failed">Error with saving item</string>
+
+    <!-- Title text for the empty view, which describes the empty dog house image [CHAR LIMIT=50] -->
+    <string name="empty_view_title_text">There\'s not much to read in here&#8230;</string>
+
+    <!-- Subtitle text for the empty view that prompts the user to add a pet [CHAR LIMIT=50] -->
+    <string name="empty_view_subtitle_text">Get started by adding a book.</string>
+
+    <!-- Title for the Edit View app bar when we are creating a new item [CHAR LIMIT=50] -->
+    <string name="editor_activity_title_add_item">Add an item</string>
+
+    <!-- Title for the Edit View app bar when we are editing an existing item [CHAR LIMIT=50] -->
+    <string name="editor_activity_title_edit_item">Edit item</string>
+
+    <!-- Toast message for when there was an error when trying to update and existing item -->
+    <string name="editor_update_item_failed">Error with updating item</string>
+
+    <!-- Toast message for then there was a successful update to an existing item -->
+    <string name="editor_update_item_successful">Item updated</string>
+
+    <!-- Dialog message when user is leaving editor but hasn't saved changes [CHAR LIMIT=NONE] -->
+    <string name="unsaved_changes_dialog_msg">Discard your changes and quit editing?</string>
+
+    <!-- Dialoge button text for the option to discard a user's changes [CHAR LIMIT=20] -->
+    <string name="discard">Discard</string>
+
+    <!-- Dialog button text for the option to keep editing the current pet [CHAR LIMIT=20] -->
+    <string name="keep_editing">Keep Editing</string>
+
+    <!-- Toast message in editor when current item was successfully deleted [CHAR LIMIT=NONE] -->
+    <string name="editor_delete_item_successful">Pet deleted</string>
+
+    <!-- Toast message in editor when current pet has failed to be deleted [CHAR LIMIT=NONE] -->
+    <string name="editor_delete_item_failed">Error with deleting pet</string>
+
+    <!-- Dialog message to ask the user to confirm deleting the current item {CHAR LIMIT=20] -->
+    <string name="delete_dialog_msg">Delete this pet?</string>
+
+    <!-- Dialog button text for the option to cancel deletion of the current pet [CHAR LIMIT=20] -->
+    <string name="cancel">Cancel</string>
+
+    <!-- Label for the item's supplier is the supplier is unknown [CHAR LIMIT=20] -->
+    <string name="unknown_supplier">Unknown supplier</string>
+</resources>
