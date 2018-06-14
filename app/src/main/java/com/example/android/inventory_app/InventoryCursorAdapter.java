@@ -55,25 +55,39 @@ public class InventoryCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         // Find individual views that we want to modify in the list item layout
-        TextView nameTextView = view.findViewById(R.id.name);
-        TextView supplierTextView = view.findViewById(R.id.supplier_name);
+        TextView nameTextView = view.findViewById(R.id.product_name);
+        TextView priceTextView = view.findViewById(R.id.product_price);
+        TextView quantityTextView = view.findViewById(R.id.product_quantity);
 
         // Find the columns of the inventory attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_NAME);
-        int supplierColumnIndex = cursor.getColumnIndex(InventoryTable.COLUMN_SUPPLIER_NAME);
+        int priceColumnIndex = cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_PRICE);
+        int quantityColumnIndex = cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_QUANTITY);
+
+        int price = cursor.getInt(priceColumnIndex);
+        String price_text = Integer.toString(price);
+
+        int quantity = cursor.getInt(quantityColumnIndex);
+        String quantity_text = Integer.toString(quantity);
 
         // Read the inventory attributes from the Cursor for the current pet
         String itemName = cursor.getString(nameColumnIndex);
-        String supplierName = cursor.getString(supplierColumnIndex);
 
-        // If the item supplier is empty string or null, then use some default text
-        // that says "Unknown supplier", so the TextView isn't blank.
-        if (TextUtils.isEmpty(supplierName)) {
-            supplierName = context.getString(R.string.unknown_supplier);
+        // If the item price is empty string or null, then use some default text
+        // that says "Free", so the TextView isn't blank.
+        if (TextUtils.isEmpty(price_text)) {
+            price_text = context.getString(R.string.price_free);
+        }
+
+        // If the item quantity is empty string or null, then use some default text
+        // that says "No stock", so the TextView isn't blank.
+        if (TextUtils.isEmpty(quantity_text)) {
+            quantity_text = context.getString(R.string.no_stock);
         }
 
         // Update the TextViews with the attributes for the current pet
         nameTextView.setText(itemName);
-        supplierTextView.setText(supplierName);
+        priceTextView.setText(price_text);
+        quantityTextView.setText(quantity_text);
     }
 }

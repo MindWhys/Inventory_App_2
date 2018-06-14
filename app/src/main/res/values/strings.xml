@@ -80,6 +80,9 @@
     <!-- Dialog button text for the option to cancel deletion of the current pet [CHAR LIMIT=20] -->
     <string name="cancel">Cancel</string>
 
-    <!-- Label for the item's supplier is the supplier is unknown [CHAR LIMIT=20] -->
-    <string name="unknown_supplier">Unknown supplier</string>
+    <!-- Label for the item's price if the price is unknown [CHAR LIMIT=20] -->
+    <string name="price_free">Free</string>
+
+    <!-- Label for the item's stock is the stock is unknown [CHAR LIMIT=20] -->
+    <string name="no_stock">No stock</string>
 </resources>
