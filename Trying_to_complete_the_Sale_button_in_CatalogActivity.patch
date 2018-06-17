@@ -1,0 +1,366 @@
+Index: app/src/main/java/com/example/android/inventory_app/data/InventoryProvider.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/android/inventory_app/data/InventoryProvider.java	(revision 4a16852ff2129829123a3b66dfd684eab092ad97)
++++ app/src/main/java/com/example/android/inventory_app/data/InventoryProvider.java	(date 1529086850000)
+@@ -237,7 +237,7 @@
+             return 0;
+         }
+ 
+-        // Otherwise, get a writeable database to update the data
++        // Otherwise, get a write-able database to update the data
+         SQLiteDatabase database = mDbHelper.getWritableDatabase();
+ 
+         // Perform the update on the database and get the number of rows affected
+Index: app/src/main/java/com/example/android/inventory_app/CatalogueActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/android/inventory_app/CatalogueActivity.java	(revision 4a16852ff2129829123a3b66dfd684eab092ad97)
++++ app/src/main/java/com/example/android/inventory_app/CatalogueActivity.java	(date 1529060950000)
+@@ -17,8 +17,11 @@
+ import android.view.Menu;
+ import android.view.MenuItem;
+ import android.view.View;
++import android.view.ViewGroup;
+ import android.widget.AdapterView;
++import android.widget.Button;
+ import android.widget.ListView;
++import android.widget.Toast;
+ 
+ import com.example.android.inventory_app.data.InventoryContract.InventoryTable;
+ 
+@@ -26,7 +29,7 @@
+  * Displays a list of entries that were entered and stored in the app.
+  */
+ 
+-public class CatalogueActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
++public class CatalogueActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+ 
+     private static final int INVENTORY_LOADER = 0;
+ 
+@@ -59,6 +62,15 @@
+         mCursorAdapter = new InventoryCursorAdapter(this, null);
+         inventoryListView.setAdapter(mCursorAdapter);
+ 
++//        // Setup SALE button to decrease Quantity by one
++//        Button sale_button = findViewById(R.id.main_sale_button);
++//        sale_button.setOnClickListener(new View.OnClickListener() {
++//            @Override
++//            public void onClick(View view) {
++//                Toast.makeText(getApplicationContext(), "Button works", Toast.LENGTH_SHORT).show();
++//            }
++//        });
++
+         // Setup item click listener
+         inventoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+             @Override
+@@ -149,7 +161,7 @@
+                 InventoryTable._ID,
+                 InventoryTable.COLUMN_PRODUCT_NAME,
+                 InventoryTable.COLUMN_PRODUCT_PRICE,
+-                InventoryTable.COLUMN_PRODUCT_QUANTITY };
++                InventoryTable.COLUMN_PRODUCT_QUANTITY};
+ 
+         // This loader will execute the ContentProvider's query method on a background thread
+         return new CursorLoader(this,
+Index: app/src/main/res/layout/activity_editor.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_editor.xml	(revision 4a16852ff2129829123a3b66dfd684eab092ad97)
++++ app/src/main/res/layout/activity_editor.xml	(date 1529013632000)
+@@ -24,7 +24,7 @@
+         <LinearLayout
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+-            android:layout_weight="2"
++            android:layout_weight="4"
+             android:paddingLeft="4dp"
+             android:orientation="vertical">
+ 
+@@ -43,26 +43,65 @@
+                 style="@style/EditorFieldStyle"/>
+ 
+             <!-- Quantity field -->
+-            <EditText
+-                android:id="@+id/edit_quantity"
+-                android:hint="@string/hint_quantity"
+-                android:inputType="number"
+-                style="@style/EditorFieldStyle"/>
++            <LinearLayout
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content">
++
++                <Button
++                    android:id="@+id/buy"
++                    android:layout_width="wrap_content"
++                    android:layout_height="match_parent"
++                    android:text="Buy"/>
++
++                <EditText
++                    android:id="@+id/edit_quantity"
++                    android:hint="@string/hint_quantity"
++                    android:inputType="number"
++                    style="@style/EditorFieldStyle"/>
+ 
+-            <!-- Supplier Name field -->
+-            <EditText
+-                android:id="@+id/edit_supplier_name"
+-                android:hint="@string/Hint_supplier_name"
+-                android:inputType="textCapWords"
+-                style="@style/EditorFieldStyle"/>
++                <Button
++                    android:id="@+id/edit_sell"
++                    android:layout_width="wrap_content"
++                    android:layout_height="match_parent"
++                    android:text="Sell"/>
++            </LinearLayout>
++
++            <LinearLayout
++                android:layout_width="match_parent"
++                android:layout_height="match_parent"
++                android:orientation="horizontal">
++
++                <ImageButton
++                    android:id="@+id/phone"
++                    android:layout_width="80dp"
++                    android:layout_height="match_parent"
++                    android:src="@drawable/ic_phone_in_talk"/>
++
++                <LinearLayout
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:orientation="vertical">
++
++                    <!-- Supplier Name field -->
++                    <EditText
++                        android:id="@+id/edit_supplier_name"
++                        android:hint="@string/Hint_supplier_name"
++                        android:inputType="textCapWords"
++                        style="@style/EditorFieldStyle"/>
+ 
+-            <!-- Supplier Phone Number field -->
+-            <EditText
+-                android:id="@+id/edit_supplier_phone_number"
+-                android:hint="@string/Hint_supplier_phone_number"
+-                android:inputType="phone"
+-                style="@style/EditorFieldStyle"/>
++                    <!-- Supplier Phone Number field -->
++                    <EditText
++                        android:id="@+id/edit_supplier_phone_number"
++                        android:hint="@string/Hint_supplier_phone_number"
++                        android:inputType="phone"
++                        style="@style/EditorFieldStyle"/>
+ 
++                </LinearLayout>
++
++            </LinearLayout>
++
++
++
+         </LinearLayout>
+ 
+     </LinearLayout>
+Index: app/src/main/res/layout/list_item.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/list_item.xml	(revision 4a16852ff2129829123a3b66dfd684eab092ad97)
++++ app/src/main/res/layout/list_item.xml	(date 1529087382000)
+@@ -4,30 +4,46 @@
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+-    android:orientation="vertical"
++    android:orientation="horizontal"
+     android:padding="@dimen/margin">
+ 
+-    <TextView
+-        android:id="@+id/product_name"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:fontFamily="sans-serif-medium"
+-        android:textAppearance="?android:textAppearanceMedium"
+-        android:textColor="#2B3D4D"  />
++    <LinearLayout
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
++        android:layout_weight="4"
++        android:orientation="vertical">
++
++        <TextView
++            android:id="@+id/product_name"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:fontFamily="sans-serif-medium"
++            android:textAppearance="?android:textAppearanceMedium"
++            android:textColor="#2B3D4D"  />
+ 
+-    <TextView
+-        android:id="@+id/product_price"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:fontFamily="sans-serif"
+-        android:textAppearance="?android:textAppearanceSmall"
+-        android:textColor="#AEB6BD"  />
++        <TextView
++            android:id="@+id/product_price"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:fontFamily="sans-serif"
++            android:textAppearance="?android:textAppearanceSmall"
++            android:textColor="#AEB6BD"  />
+ 
+-    <TextView
+-        android:id="@+id/product_quantity"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:fontFamily="sans-serif"
+-        android:textAppearance="?android:textAppearanceSmall"
+-        android:textColor="#AEB6BD"  />
++        <TextView
++            android:id="@+id/product_quantity"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:fontFamily="sans-serif"
++            android:textAppearance="?android:textAppearanceSmall"
++            android:textColor="#AEB6BD"  />
++    </LinearLayout>
++
++    <Button
++        android:id="@+id/main_sale_button"
++        android:layout_width="0dp"
++        android:layout_height="match_parent"
++        android:layout_weight="1"
++        android:text="Sell"
++        android:focusable="false"/>
++
+ </LinearLayout>
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision 4a16852ff2129829123a3b66dfd684eab092ad97)
++++ app/src/main/AndroidManifest.xml	(date 1529013978000)
+@@ -2,6 +2,8 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     package="com.example.android.inventory_app">
+ 
++    <uses-permission android:name="android.permission.CALL_PHONE" />
++
+     <application
+         android:allowBackup="true"
+         android:icon="@mipmap/ic_launcher"
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision 4a16852ff2129829123a3b66dfd684eab092ad97)
++++ .idea/misc.xml	(date 1529264680000)
+@@ -25,7 +25,7 @@
+       </value>
+     </option>
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+diff --git app/src/main/res/drawable-hdpi/ic_phone_in_talk.png app/src/main/res/drawable-hdpi/ic_phone_in_talk.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..1bdf2c7b3cef433cda533273ce48100616f8d65d
+GIT binary patch
+literal 410
+zc$@*60cHM)P)<h;3K|Lk000e1NJLTq000{R000{Z1ONa4C*3^W0004DNkl<Zc-muN
+z7(zgUVK&18Fr2|44;Axcn81+5povf0EQbGZ*aa19fbvf<c;V7E14-LVs8}GwCWgmQ
+zvBeCW*tE4GY1@t>W67`+EP4Q&#uOxNFQ8(4aD{mce}UqQFtwQ=Y5UKh1NGY<hW!lo
+zV0J!O+!I|J3&SV4rsoVINI~)sXcq|V0<uqF+P4a>Ndqb(2n@mFV2yS_o;6rj9bKC*
+znkEQf1KRMPVK12d1jx!j*T&3n7bv_8!xi2@(ccUlK-Lx@s~^*uiC_m=qlpRu{n!8u
+zRZu)O08<VIU}888)OZK1ge0KD@Exde3(&zNf@E;OEJ4vI#bC(5NJwKFSmQPZekfm`
+z;SG@g1{iO17`oxP184fY&)@*pgn%>fJM{-x(ONW3|AF}tFVF?%vj14%0z!UdVu%Mu
+z2FcnWT74K+FnmPPHjDU3VPP-=rl4kq>A-xiI)utc0Csh)S}3fEs{jB107*qoM6N<$
+Eg1Ahmp#T5?
+
+diff --git app/src/main/res/drawable-mdpi/ic_phone_in_talk.png app/src/main/res/drawable-mdpi/ic_phone_in_talk.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..93ecb99a51242f29e0371353696968af36db69e7
+GIT binary patch
+literal 274
+zc%17D@N?(olHy`uVBq!ia0vp^LLkh+0wn(&ce?|mZhE>nhE&{2PFSF)kz~QpQZ2FN
+z;2v3?$r5u6MBgU;;BV7RxX0Oc-r<`fTV#mq>4jZV3v0^SOxpN){3V`D5WVUw`j+wY
+zHiIVy8;o8sOqF#Ad%_VK!v8FmZPPc#sY@9%-CLB>+MYW!mRZ;{o;b}G^{X{eX;WmW
+zL!z_FztFa`4xdyGm!-JY@SK-8XRtw#OIv<HB)5bFr{-!#t!R!CPL2}B+G|WDyZDxE
+z(rT;c5tle4speeE%`IZ`;OqyHbqp;03EQWLXS_9b>QZ=^c0AzphAD~a&T^%}LJWtu
+W`n;U_Q_C6XNd`|>KbLh*2~7Z(%wm-Q
+
+diff --git app/src/main/res/drawable-xhdpi/ic_phone_in_talk.png app/src/main/res/drawable-xhdpi/ic_phone_in_talk.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..664b7340b844dcc1343854dd6db1688564b9c2b9
+GIT binary patch
+literal 505
+zc$@+G0S5kwP)<h;3K|Lk000e1NJLTq001Na001Ni1ONa4O9@aD0005NNkl<Zc-muN
+z7zM-wMutR&1~@EY;6swDV#r`{V&EapphSlMC~!WK97N<d!w!ZZpoIiL6`DbZFbsmg
+ziwsuy4a!9`=mL^l8^c_Na}58WGJhB<@fj3{X3#qf6|xMi44<L06LA}4gJ#fw25Bs+
+zWEl2CWh-zQB#L2B1YE9?A)G-3%4TI)4)ve~E~B2H88jOuuzxYkV-SNHbr39a9#;%5
+zMl+}YBi5cW=s-j33z#2BOmO!j$#gOtfr>r>1_2}<LA-6)4dP??4mV~3hO8UId$7zL
+zFi#Gg7=AHuVK-_y-pF-_h7}~(FMxRt*bTA-Oa5h0#1S3G!1AGB_Ixlq4Oh(V152;M
+zA={0Vf*_%UGmTq7GlCE0#mOA7K`$93DK$ul;W5~#V+<UW8f6VEc|b;OU|^xtsBCC5
+z*ofvTCWcyu1q?9^^28g}0yXLcgA|f63*ia&1H&bT!$3YiVWXO%T3#{uV;F;gMZ|gV
+zH&ppL1~sh4{0CMOL<aj~tlCL72$UFR!^>)l41%QgJ=8G>1k4$hF?^$jK_I{jOhF46
+v9-<f&M@e!O23C==z&Nc08pFsi3Wx>(1e-H-#ae5e00000NkvXXu0mjfSRK7c
+
+diff --git app/src/main/res/drawable-xxhdpi/ic_phone_in_talk.png app/src/main/res/drawable-xxhdpi/ic_phone_in_talk.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..bfaa578e956ebf34832300e15c1e14176aaa65b0
+GIT binary patch
+literal 745
+zc$@+00v7#=P)<h;3K|Lk000e1NJLTq001@s001@!1ONa4CQPDM00088Nkl<Zc-rlk
+zIcOA77{~vcM9_!^7ZuUQ3yr%921GDqNks6-(McMwDp<u%L)2hm#M+~^5br1=78WAv
+zHVPWiR$>tqf&__23XNHH{D#^6^5*S(``*lC7K{DA?wfDsH{bCtprVTYU!~FF8_ig&
+z@M^>+EQyM`3`a5gi~KzM1RmiyQemTVl;bxRDq)2&jQyw%3d?9<4px?gx#JyLgTc0H
+zVH=Dvcig}Ndss>f%SfI(u@}ea<DVqI5oJ3mwNwk+r+FiR?YNCUg6B9k+rg^vO9LA;
+zG}coe&N8|Y4eWv8y#$UTCnVFVcK0=~uTpC_(%;L?-i{yaf87Q)sI6L4Q8!NF9y%zd
+z8FkQ%Ecov+!`ij5UQO!{qd~Cu2&ptq^Q5n{#L=mpXHz&J)Gll6U_mdGsB6A-$&>mo
+z4)T+Y{JSsBus-F=Ag5#(y7AZ--OTK|!`6BetiA|!Q=9z^J_@xf#J+=VJ?7Y6`B1k?
+z7J3CfuxA@D4dZ#sLo@8KfEqIPR5SbDW!q5R^4ScVk1xEBEwh-LPx9X1DJD<7`~ykz
+z>u1>coCWL%d#}n{I@yvozn-MO^qg}RoBnS8^fvBQ*-}y`+5H(OCpOK)`ydS*Rc#EL
+zwo67dU1i)Dmd6dN!zklk2RX`w(-vCu3b-t4<Hj8lR+FqYx@ubWPtj3*PE_20fP15?
+zT@A1Ele8M1C2$LEG^?o$A#_o|jTLofjj*N2hxY#9ummm$pO~h@X_W=a8*8E_(_K~4
+zRw#$|gpjQ=C43}@^Ry$FP!3fu^h6kyYU0EP1KrZDSO8`T=BibSFIE^Z7bozoTrgLQ
+zaGGw^WrDe?MHd}J%LMbZj*|LZ+nK327VJ8@wG7a$<}H2-s7rD06A3KFdYY3>@kCWo
+bMYE%SgM+m>(wk0000000NkvXXu0mjf993Tr
+
+diff --git app/src/main/res/drawable-xxxhdpi/ic_phone_in_talk.png app/src/main/res/drawable-xxxhdpi/ic_phone_in_talk.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..8b21ef41a4fd1a280ac24d0e4c6b4c41a2861861
+GIT binary patch
+literal 944
+zc$@*S15f;kP)<h;3K|Lk000e1NJLTq002k;002k`1ONa4|Kxkj000AbNkl<Zc-rlm
+zSx8ku7{~u+8MfL=i$PgNRF-cQEo4QTNEoz0(VN*rq)|^jhy)=m1UK!P5E4PrLSPFO
+zrB;NLkd+vcVHsJGirg&2Yh|YyESx!K?w#{pkDU8({_{3-zVH0*EZ=<Jxqv56o;-Qd
+zYAAdNz)-Y5c#dTutbU>$O?ZeB?88FDI0@ua!u)TYNK{(MPqm>GX-;7U!U7q{u>sWE
+z-Xa@u{RisN0Oi{T;_V}L_7|v215`i);_U%u4djyf$v_6aVO!)tO&aG{l~!>Wi#gbY
+zJT@OerQOj;H~BLSP_@=W0<x4|&S7vQK({nN0h@l-;e`Szf>|ok02!ES(^D)95nYyr
+zBkO<`D3jnV1q~+atyG{5TA-68f8+2(vhJV;fkZ7(o$@YgWiKv728LM1hU2LzE)mtL
+zMM?@2huT;yA8nZ>dEs`@fXcK$n>B&)i)E)QkhXU-?T$OB1xmFMsf*Yt6O}8C?xp~x
+zYH&(zUL98?q*%NZ#u{l6>2nyI3#MNl?k+nW=KQXp0F{Kqxv0e9cUclkH11fQm-kYQ
+zFmjdxw2Fw+r$wkYZEx|!WeX!MltqhGF4`q64%Y}&N>+Ko*cfyRBPo<QDzM;OwuRG+
+zR4>IPF;qShM)p#GX0jSXJ~5QkVToj$E{x<0{l&EKcvCP9T4JwGcLi&o(4Q&vSJGUr
+zlz!zQBG4|uwo2%qEA+pk-f2}*Ry+x`B^S?ApT<kOi>TGo9GxfDzkQb7Hu`O<TtZso
+zex09!-vZEkjB+2T&~%Tvu8}Nv5s|XoM@pA~f>`W6QnBf}oZ&W5JYGpi4VdUQ(ri||
+zh)A`pl6P4drte0zwq|K5wj+6<kaA4v$Qwm5Bx)FL|9kQ^PGJkCJCAhSgw(=jAT&;e
+zC8O$KDQp=_kB{Ln_G6k8NM}s1=*FH9$Dl%6N_B?(qDxSW1&JrN2@&A%R^!aVov=7=
+z#(D{-+!l_(j)`O2yGK!vOd;a%=3o%`YH|LZ)fW?RpMYaHdE$~$r+C3H5{}_)5QvAL
+z`1%0`;@XH0(FMfwC7+a4x(>uO5BH)Ah${_`qYH>@Ij)-uaF>C&l5hl{q6vs=5G%v|
+zrsAMKe^NN6`7Ft}#&U3HKEOMu$ykeA79MV(8jWbj4;Cl_3?~krJbCiuNvFR$kkAEY
+SfvQdb0000<MNUMnLSTY8#;W}Q
+

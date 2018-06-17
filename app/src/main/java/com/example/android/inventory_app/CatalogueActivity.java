@@ -17,8 +17,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.android.inventory_app.data.InventoryContract.InventoryTable;
 
@@ -26,7 +29,7 @@ import com.example.android.inventory_app.data.InventoryContract.InventoryTable;
  * Displays a list of entries that were entered and stored in the app.
  */
 
-public class CatalogueActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class CatalogueActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int INVENTORY_LOADER = 0;
 
@@ -58,6 +61,15 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
         // There is no inventory data yet (until the loader finishes) so pass in null for the Cursor.
         mCursorAdapter = new InventoryCursorAdapter(this, null);
         inventoryListView.setAdapter(mCursorAdapter);
+
+//        // Setup SALE button to decrease Quantity by one
+//        Button sale_button = findViewById(R.id.main_sale_button);
+//        sale_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Toast.makeText(getApplicationContext(), "Button works", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         // Setup item click listener
         inventoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -149,7 +161,7 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
                 InventoryTable._ID,
                 InventoryTable.COLUMN_PRODUCT_NAME,
                 InventoryTable.COLUMN_PRODUCT_PRICE,
-                InventoryTable.COLUMN_PRODUCT_QUANTITY };
+                InventoryTable.COLUMN_PRODUCT_QUANTITY};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,
