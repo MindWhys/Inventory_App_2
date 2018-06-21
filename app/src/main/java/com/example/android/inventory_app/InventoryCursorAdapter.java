@@ -83,42 +83,39 @@ public class InventoryCursorAdapter extends CursorAdapter {
         final int quantity = cursor.getInt(quantityColumnIndex);
         String quantity_text = Integer.toString(quantity);
 
-        // Setting up the SALE button
-        Button saleButton = view.findViewById(R.id.main_sale_button);
-        saleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = getIntent();
-                mCurrentItemUri = intent.getData();
-
-                int interimQuantity = quantity;
-                int newQuantity = interimQuantity--;
-                if (quantity <= 0) {
-                    Toast.makeText(context, "Out of Stock", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Defines an object to contain the updated values
-                    ContentValues values = new ContentValues();
-                    values.put(InventoryTable.COLUMN_PRODUCT_QUANTITY, newQuantity);
-
-                    // Defines selection criteria for the rows you want to update
-                    String mSelectionClause = InventoryTable.COLUMN_PRODUCT_QUANTITY + "=?";
-                    String[] mSelectionArgs = {"1"};
-
-                    /**
-                     *  Sets the updated value and updates the selected words.
-                     */
-                    values.putNull(InventoryTable.COLUMN_PRODUCT_QUANTITY);
-
-                    int mRowsUpdated = context.getContentResolver().update(
-                            InventoryTable.CONTENT_URI,
-                            values,
-                            mSelectionClause,
-                            mSelectionArgs);
-                    Toast.makeText(context, "Row: " + mRowsUpdated + " new quantity is " + newQuantity, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//        // Setting up the SALE button
+//        Button saleButton = view.findViewById(R.id.main_sale_button);
+//        saleButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                int interimQuantity = quantity;
+//                int newQuantity = interimQuantity--;
+//                if (interimQuantity <= 0) {
+//                    Toast.makeText(context, interimQuantity, Toast.LENGTH_SHORT).show();
+//                } else {
+//                    // Defines an object to contain the updated values
+//                    ContentValues values = new ContentValues();
+//                    values.put(InventoryTable.COLUMN_PRODUCT_QUANTITY, newQuantity);
+//
+//                    // Defines selection criteria for the rows you want to update
+//                    String mSelectionClause = InventoryTable.COLUMN_PRODUCT_QUANTITY + "=?";
+//                    String[] mSelectionArgs = {"1"};
+//
+//                    /**
+//                     *  Sets the updated value and updates the selected words.
+//                     */
+//                    values.putNull(InventoryTable.COLUMN_PRODUCT_QUANTITY);
+//
+//                    int mRowsUpdated = context.getContentResolver().update(
+//                            InventoryTable.CONTENT_URI,
+//                            values,
+//                            mSelectionClause,
+//                            mSelectionArgs);
+//                    Toast.makeText(context, "Row: " + mRowsUpdated + " new quantity is " + newQuantity, Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
 
         // Read the inventory attributes from the Cursor for the current pet
         String itemName = cursor.getString(nameColumnIndex);

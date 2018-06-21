@@ -34,6 +34,7 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
     private static final int INVENTORY_LOADER = 0;
 
     InventoryCursorAdapter mCursorAdapter;
+    InventoryCursorAdapter saleCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +58,21 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
         View emptyView = findViewById(R.id.empty_view);
         inventoryListView.setEmptyView(emptyView);
 
+
         // Setup an Adapter to create a list item for each row of inventory data in the Cursor.
         // There is no inventory data yet (until the loader finishes) so pass in null for the Cursor.
         mCursorAdapter = new InventoryCursorAdapter(this, null);
         inventoryListView.setAdapter(mCursorAdapter);
+
+//        Button sale_button = findViewById(R.id.main_sale_button);
+//        saleCursorAdapter = new InventoryCursorAdapter(this, null);
+//        sale_button.setAdapter(saleCursorAdapter);
+//        sale_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view, int position, ) {
+//
+//            }
+//        });
 
 //        // Setup SALE button to decrease Quantity by one
 //        Button sale_button = findViewById(R.id.main_sale_button);
@@ -90,6 +102,14 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
 
                 // Launch the {@link EditorActivity} to display the data for the current pet.
                 startActivity(intent);
+
+                Button sale_button = findViewById(R.id.main_sale_button);
+                sale_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getApplicationContext(), "Button works", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
