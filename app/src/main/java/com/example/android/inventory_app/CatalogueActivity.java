@@ -31,6 +31,8 @@ import com.example.android.inventory_app.data.InventoryContract.InventoryTable;
 
 public class CatalogueActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    static final String LOG_TAG = "CatalogActivity";
+
     private static final int INVENTORY_LOADER = 0;
 
     InventoryCursorAdapter mCursorAdapter;
@@ -103,13 +105,13 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
                 // Launch the {@link EditorActivity} to display the data for the current pet.
                 startActivity(intent);
 
-                Button sale_button = findViewById(R.id.main_sale_button);
-                sale_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(getApplicationContext(), "Button works", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                Button sale_button = findViewById(R.id.main_sale_button);
+//                sale_button.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Toast.makeText(getApplicationContext(), "Button works", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
             }
         });
 
