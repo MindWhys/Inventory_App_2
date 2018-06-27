@@ -206,7 +206,7 @@ public class InventoryProvider extends ContentProvider {
         }
 
         // If the {@link InventoryTable#COLUMN_PRODUCT_QUANTITY} key is present,
-        // check that the price value is not null or less than 0.
+        // check that the quantity value is not null or less than 0.
         if (values.containsKey(InventoryContract.InventoryTable.COLUMN_PRODUCT_QUANTITY)) {
             Integer quantity = values.getAsInteger(InventoryContract.InventoryTable.COLUMN_PRODUCT_QUANTITY);
             if (quantity == null || quantity < 0) {
