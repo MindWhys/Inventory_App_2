@@ -27,7 +27,7 @@ import com.example.android.inventory_app.data.InventoryContract.InventoryTable;
  */
 public class InventoryCursorAdapter extends CursorAdapter {
 
-    static final String LOG_TAG = "InventoryCursorActivity";
+    private static final String LOG_TAG = "InventoryCursorActivity";
 
     private Uri mCurrentItemUri;
 
@@ -37,7 +37,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
      * @param context The context
      * @param c       The cursor from which to get the data.
      */
-    public InventoryCursorAdapter(Context context, Cursor c) {
+    InventoryCursorAdapter(Context context, Cursor c) {
         super(context, c, 0 /* flags */);
     }
 
@@ -96,7 +96,9 @@ public class InventoryCursorAdapter extends CursorAdapter {
 //                int newQuantity = interimQuantity--;
 
                 int currentQuantityColumnIndex = cursor.getInt(cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_QUANTITY));
-                int currentQuantity = cursor.getInt(currentQuantityColumnIndex);
+//                int currentQuantity = cursor.getInt(currentQuantityColumnIndex);
+                String value = quantityTextView.getText().toString();
+                int currentQuantity = Integer.parseInt(value);
                 Log.e(LOG_TAG, "The currentQuantity is: " + currentQuantity);
                 if (currentQuantity <= 0) {
 //                    String no_stock = toString(currentQuantity);
