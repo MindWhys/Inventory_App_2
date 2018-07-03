@@ -17,11 +17,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.android.inventory_app.data.InventoryContract.InventoryTable;
 
@@ -53,7 +50,7 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
             }
         });
 
-        // Find the ListView which will be populated with the pet data
+        // Find the ListView which will be populated with the item data
         ListView inventoryListView = findViewById(R.id.list);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
@@ -66,25 +63,6 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
         mCursorAdapter = new InventoryCursorAdapter(this, null);
         inventoryListView.setAdapter(mCursorAdapter);
 
-//        Button sale_button = findViewById(R.id.main_sale_button);
-//        saleCursorAdapter = new InventoryCursorAdapter(this, null);
-//        sale_button.setAdapter(saleCursorAdapter);
-//        sale_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view, int position, ) {
-//
-//            }
-//        });
-
-//        // Setup SALE button to decrease Quantity by one
-//        Button sale_button = findViewById(R.id.main_sale_button);
-//        sale_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(getApplicationContext(), "Button works", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
         // Setup item click listener
         inventoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -92,9 +70,9 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
                 // Create new intent to go to {@link EditorActivity}
                 Intent intent = new Intent(CatalogueActivity.this, EditorActivity.class);
 
-                // Form the content URI that represents the specific pet that was clicked on
+                // Form the content URI that represents the specific item that was clicked on
                 // by appending the "id" (passed as input to this method) onto the
-                // {@link PetEntry#CONTENT_URI}.
+                // {@link ItemEntry#CONTENT_URI}.
                 // For example, the URI would be "content://come.example.android.inventory_app/inventory/2"
                 // if the item with ID 2 was clicked on.
                 Uri currentItemUri = ContentUris.withAppendedId(InventoryTable.CONTENT_URI, id);
@@ -102,16 +80,8 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
                 // Set the URI on the data field of the intent
                 intent.setData(currentItemUri);
 
-                // Launch the {@link EditorActivity} to display the data for the current pet.
+                // Launch the {@link EditorActivity} to display the data for the current item.
                 startActivity(intent);
-
-//                Button sale_button = findViewById(R.id.main_sale_button);
-//                sale_button.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Toast.makeText(getApplicationContext(), "Button works", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
             }
         });
 
@@ -120,8 +90,6 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
     }
 
     private void insertItem() {
-//        // Gets the data repository in write more
-//        SQLiteDatabase db = entryDbHelper.getWritableDatabase();
 
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
@@ -131,24 +99,16 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
         values.put(InventoryTable.COLUMN_SUPPLIER_NAME, "Waterstones");
         values.put(InventoryTable.COLUMN_SUPPLIER_PHONE_NUMBER, "08081188787");
 
-//        // Insert the new row, returning the primary key value in the new row
-//        long newRowId = db.insert(InventoryTable.TABLE_NAME, null, values);
-//
-//        Log.v("CatalogueActivity", "New row ID: " + newRowId);
-
-        //Insert a new row for "The Odyssey" into the provider using the ContentResolver.
-        // Use the {@link InventoryTable#CONTENT_URI} to indicate that we want to insert
-        // into the inventory database table.
         // Receive the new content URI that will allow us to access "The Odyssey's" data in the future.
         Uri newUri = getContentResolver().insert(InventoryTable.CONTENT_URI, values);
     }
 
     /**
-     * Helper method to delete all pets in the database.
+     * Helper method to delete all items in the database.
      */
     private void deleteAllItems() {
         int rowsDeleted = getContentResolver().delete(InventoryTable.CONTENT_URI, null, null);
-        Log.v("CatalogActivity", rowsDeleted + " rows deleted from pet database");
+        Log.v("CatalogActivity", rowsDeleted + " rows deleted from item database");
     }
 
     @Override
@@ -196,7 +156,7 @@ public class CatalogueActivity extends AppCompatActivity implements LoaderManage
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        // Update {@link InventoryCursorAdapter} with this new cursor containing updated pet data
+        // Update {@link InventoryCursorAdapter} with this new cursor containing updated item data
         mCursorAdapter.swapCursor(data);
     }
 
