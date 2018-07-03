@@ -2,24 +2,24 @@ package com.example.android.inventory_app;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -31,15 +31,12 @@ import android.widget.Toast;
 
 import com.example.android.inventory_app.data.InventoryContract.InventoryTable;
 
-import org.w3c.dom.Text;
-
-
 /**
- * Allows user to create a new pet or edit an existing one.
+ * Allows user to create a new item or edit an existing one.
  */
 public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    /** Identifier for the pet data loader */
+    /** Identifier for the item data loader */
     private static final int EXISTING_ITEM_LOADER = 0;
 
     /** Content URI for the existing item (null if it's a new item) */
@@ -69,10 +66,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     /** Boolean flag that keeps track of whether the item has been edited (true) or not (false) */
     private boolean mItemHasChanged = false;
 
-    public int number = 1;
-
     ImageButton supplierCallButton;
     private static final int REQUEST_CALL = 1;
+    private static String[] PERMISSIONS_PHONECALL = {Manifest.permission.CALL_PHONE};
 
 
     /**
@@ -102,17 +98,17 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         // If the intent DOES NOT contain a item content URI, then we know that we are
         // creating a new item.
         if (mCurrentItemUri == null) {
-            // This is a new pet, so change the app bar to say "Add a Pet"
+            // This is a new item, so change the app bar to say "Add an Item"
             setTitle(getString(R.string.editor_activity_title_add_item));
 
             // Invalidate the options menu, so the "Delete" menu option can be hidden.
-            // (It doesn't make sense to delete a pet that hasn't been created yet.)
+            // (It doesn't make sense to delete an item that hasn't been created yet.)
             invalidateOptionsMenu();
         } else {
-            // Otherwise this is an existing item, so change the app bar to say "Edit Pet"
+            // Otherwise this is an existing item, so change the app bar to say "Edit Item"
             setTitle(getString(R.string.editor_activity_title_edit_item));
 
-            // Initialize a loader to read the pet data from the database
+            // Initialize a loader to read the item data from the database
             // and display the current values in the editor
             getSupportLoaderManager().initLoader(EXISTING_ITEM_LOADER, null, this);
         }
@@ -142,19 +138,29 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         supplierNameEditText.setOnTouchListener(mTouchListener);
         supplierPhoneNumberEditText.setOnTouchListener(mTouchListener);
 
+
+
         buyButton.setOnClickListener(new View.OnClickListener() {
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
-                productQuantityEditText.setText("" + number++);
+                String value = productQuantityEditText.getText().toString();
+                int number = Integer.parseInt(value);
+                int increasedNumber = number + 1;
+                productQuantityEditText.setText("" + increasedNumber);
             }
         });
 
         sellButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
+                String value = productQuantityEditText.getText().toString();
+                int number = Integer.parseInt(value);
                 if (number >= 1){
-                    productQuantityEditText.setText("" + number--);
+                    int decreasedNumber = number - 1;
+                    productQuantityEditText.setText("" + decreasedNumber);
                 } else {
                     Toast.makeText(getApplicationContext(), "No items in stock", Toast.LENGTH_SHORT).show();
                 }
@@ -164,24 +170,43 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         supplierCallButton = findViewById(R.id.phone);
         supplierCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String supplierPhoneNumber = supplierPhoneNumberEditText.getText().toString();
-                        Intent supplierCallIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + supplierPhoneNumber));
-                if (ContextCompat.checkSelfPermission(EditorActivity.this,
-                        Manifest.permission.CALL_PHONE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    android.support.v4.app.ActivityCompat.requestPermissions
-                            (EditorActivity.this, new String[]{
-                                    Manifest.permission.CALL_PHONE}, REQUEST_CALL);
-                } else {
-                    startActivity(supplierCallIntent);
+            public void onClick(View view) {
+                if (view == supplierCallButton) {
+                    // permission check and request call function
+                    call();
                 }
-            }
+        }
         });
     }
 
+
+
+    private void call() {
+        // Check the SDK version and whether the permission is already granted or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+        } else {
+            String supplierPhoneNumber = supplierPhoneNumberEditText.getText().toString();
+            Intent supplierCallIntent = new Intent(Intent.ACTION_CALL);
+            supplierCallIntent.setData(Uri.parse("tel:" + supplierPhoneNumber));
+            startActivity(supplierCallIntent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_CALL) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                call();
+            } else {
+                Toast.makeText(this, "Sorry! Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     /**
-     * Get user input from the editor and save pet into the database.
+     * Get user input from the editor and save item into the database.
      */
     private void saveItem() {
         // Read from input fields
@@ -198,63 +223,72 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 TextUtils.isEmpty(productNameString) && TextUtils.isEmpty(productPriceString) &&
                 TextUtils.isEmpty(productQuantityString) && TextUtils.isEmpty(supplierNameString) &&
                 TextUtils.isEmpty(supplierPhoneNumberString)) {
+            finish();
             return;
-        }
+        } else if (mCurrentItemUri == null &&
+                TextUtils.isEmpty(productNameString) ||
+                TextUtils.isEmpty(supplierNameString) ||
+                TextUtils.isEmpty(supplierPhoneNumberString)){
+                showSaveConfirmationDialog();
+        } else{
+            // Create a new map of values, where column names are the keys
+            ContentValues values = new ContentValues();
+            values.put(InventoryTable.COLUMN_PRODUCT_NAME, productNameString);
+            values.put(InventoryTable.COLUMN_SUPPLIER_NAME, supplierNameString);
+            values.put(InventoryTable.COLUMN_SUPPLIER_PHONE_NUMBER, supplierPhoneNumberString);
 
-        // Create a new map of values, where column names are the keys
-        ContentValues values = new ContentValues();
-        values.put(InventoryTable.COLUMN_PRODUCT_NAME, productNameString);
-        values.put(InventoryTable.COLUMN_SUPPLIER_NAME, supplierNameString);
-        values.put(InventoryTable.COLUMN_SUPPLIER_PHONE_NUMBER, supplierPhoneNumberString);
-
-        // If the price is not provided by the user, don't try to parse the string into an
-        // integer value. Use 0 by default.
-        int price = 0;
-        if (!TextUtils.isEmpty(productPriceString)){
-            price = Integer.parseInt(productPriceString);
-        }
-        values.put(InventoryTable.COLUMN_PRODUCT_PRICE, price);
-
-        // If the quantity is not provided by the user, don't try to parse the string into an
-        // integer value. Use 0 by default.
-        int quantity = 0;
-        if (!TextUtils.isEmpty(productPriceString)){
-            quantity = Integer.parseInt(productQuantityString);
-        }
-        values.put(InventoryTable.COLUMN_PRODUCT_QUANTITY, quantity);
-
-        // Determine if this is a new or existing item by checking if mCurrentItemUri is null or not
-        if (mCurrentItemUri == null) {
-            // This is a NEW pet, so insert a new pet into the provider,
-            // returning the content URI for the new pet.
-            Uri newUri = getContentResolver().insert(InventoryTable.CONTENT_URI, values);
-
-            // Show a toast message depending on whether or not the insertion was successful.
-            if (newUri == null) {
-                // If the new content URI is null, then there was an error with insertion.
-                Toast.makeText(this, getString(R.string.editor_insert_item_failed),
-                Toast.LENGTH_SHORT).show();
-            } else {
-                // Otherwise, the insertion was successful and e can display a toast.
-                Toast.makeText(this, getString(R.string.editor_insert_item_successful),
-                        Toast.LENGTH_SHORT).show();
+            // If the price is not provided by the user, don't try to parse the string into an
+            // integer value. Use 0 by default.
+            int price = 0;
+            if (!TextUtils.isEmpty(productPriceString)){
+                price = Integer.parseInt(productPriceString);
             }
-        } else {
-            // Otherwise this is an EXISTING pet, so update the pet with content URI: mCurrentPetUri
-            // and pass in the new ContentValues.  Pass in null for the selection and selection args
-            // because mCurrentPetUri will already identify the correct row in the database that
-            // we want to modify.
-            int rowsAffected = getContentResolver().update(mCurrentItemUri, values, null, null);
+            values.put(InventoryTable.COLUMN_PRODUCT_PRICE, price);
 
-            // Show a toast message depending on whether or not the update was successful.
-            if (rowsAffected == 0) {
-                // If no rows were affected, there was an error with the update.
-                Toast.makeText(this, getString(R.string.editor_update_item_failed), Toast.LENGTH_SHORT).show();
-            } else {
-                // Otherwise, the update was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.editor_update_item_successful), Toast.LENGTH_SHORT).show();
+            // If the quantity is not provided by the user, don't try to parse the string into an
+            // integer value. Use 0 by default.
+            int quantity = 0;
+            if (!TextUtils.isEmpty(productPriceString)){
+                quantity = Integer.parseInt(productQuantityString);
             }
+            values.put(InventoryTable.COLUMN_PRODUCT_QUANTITY, quantity);
+
+            // Determine if this is a new or existing item by checking if mCurrentItemUri is null or not
+            if (mCurrentItemUri == null) {
+                // This is a NEW item, so insert a new item into the provider,
+                // returning the content URI for the new item.
+                Uri newUri = getContentResolver().insert(InventoryTable.CONTENT_URI, values);
+
+                // Show a toast message depending on whether or not the insertion was successful.
+                if (newUri == null) {
+                    // If the new content URI is null, then there was an error with insertion.
+                    Toast.makeText(this, getString(R.string.editor_insert_item_failed),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    // Otherwise, the insertion was successful and e can display a toast.
+                    Toast.makeText(this, getString(R.string.editor_insert_item_successful),
+                            Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                // Otherwise this is an EXISTING item, so update the item with content URI: mCurrentItemUri
+                // and pass in the new ContentValues.  Pass in null for the selection and selection args
+                // because mCurrentItemUri will already identify the correct row in the database that
+                // we want to modify.
+                int rowsAffected = getContentResolver().update(mCurrentItemUri, values, null, null);
+
+                // Show a toast message depending on whether or not the update was successful.
+                if (rowsAffected == 0) {
+                    // If no rows were affected, there was an error with the update.
+                    Toast.makeText(this, getString(R.string.editor_update_item_failed), Toast.LENGTH_SHORT).show();
+                } else {
+                    // Otherwise, the update was successful and we can display a toast.
+                    Toast.makeText(this, getString(R.string.editor_update_item_successful), Toast.LENGTH_SHORT).show();
+                }
+            }
+            finish();
         }
+
+
     }
 
     @Override
@@ -272,7 +306,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
         super.onPrepareOptionsMenu(menu);
-        // If this is a new pet, hide the "Delete" menu item.
+        // If this is a new item, hide the "Delete" menu item.
         if (mCurrentItemUri == null) {
             MenuItem menuItem = menu.findItem(R.id.action_delete);
             menuItem.setVisible(false);
@@ -286,10 +320,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
+
                 // Save an item to database
                 saveItem();
                 // Exit activity
-                finish();
+
                 return true;
             // Respond to a click on the "Delete menu option
             case R.id.action_delete:
@@ -298,7 +333,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
-                // If the pet hasn't changed, continue with navigating to parent activity
+                // If the item hasn't changed, continue with navigating to parent activity
                 // which is the {@link CatalogActivity}.
                 if (!mItemHasChanged) {
                     NavUtils.navigateUpFromSameTask(EditorActivity.this);
@@ -329,7 +364,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
      */
     @Override
     public void onBackPressed() {
-        // If the pet hasn't changed, continue with handling back button press
+        // If the item hasn't changed, continue with handling back button press
         if(!mItemHasChanged) {
             super.onBackPressed();
             return;
@@ -353,8 +388,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int i, @Nullable Bundle bundle) {
-        // Since the editor shows all pet attributes, define a projection that contains
-        // all columns from the pet table
+        // Since the editor shows all item attributes, define a projection that contains
+        // all columns from the item table
         String[] projection = {
                 InventoryTable._ID,
                 InventoryTable.COLUMN_PRODUCT_NAME,
@@ -382,7 +417,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         // Proceed with moving to the first row of the cursor and reading data from it
         // (This should be the only row in the cursor)
         if (cursor.moveToFirst()) {
-            // Find the columns of pet attributes that we're interested in
+            // Find the columns of item attributes that we're interested in
             int nameColumnIndex = cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_NAME);
             int priceColumnIndex = cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_PRICE);
             int quantityColumnIndex = cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_QUANTITY);
@@ -435,7 +470,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Keep Editing button, so dismiss the dialog
-                // and continue editing the pet.
+                // and continue editing the item.
                 if (dialog != null) {
             dialog.dismiss();
                 }
@@ -458,8 +493,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         builder.setPositiveButton(R.string.action_delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                // User click on the "Delete" button, so delete the pet.
-                deletePet();
+                // User click on the "Delete" button, so delete the item.
+                deleteItem();
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -479,13 +514,44 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     /**
-     *  Perform the delete if this is the existing pet.
+     * Prompt the user to confirm that they want to save this item.
      */
-    private void deletePet() {
+    private void showSaveConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the positive and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.save_dialog_msg);
+        builder.setPositiveButton(R.string.action_discard_item, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                // Exit activity
+                finish();
+            }
+        });
+        builder.setNegativeButton(R.string.action_continue_creating, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked on the "Cancel" button, so dismiss the dialog
+                // and continue editing the item.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     *  Perform the delete if this is the existing item.
+     */
+    private void deleteItem() {
         if (mCurrentItemUri != null) {
             // Call the ContentResolver to delete the item at the given content URI.
-            // Pass in null for the selection and selection args because the mCurrentPetUri
-            // content URI already identifies the pet that we want.
+            // Pass in null for the selection and selection args because the mCurrentItemUri
+            // content URI already identifies the item that we want.
             int rowsDeleted = getContentResolver().delete(mCurrentItemUri, null, null);
 
             // Show a toast message depending on whether or not the delete was successful.

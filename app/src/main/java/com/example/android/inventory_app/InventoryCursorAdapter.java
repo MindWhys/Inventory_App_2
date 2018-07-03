@@ -1,8 +1,8 @@
 package com.example.android.inventory_app;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -12,24 +12,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.inventory_app.InventoryProvider;
 import com.example.android.inventory_app.data.InventoryContract.InventoryTable;
 
 
 /**
  * {@link InventoryCursorAdapter} is an adapter for a list or grid view
- * that uses a {@link Cursor} of pet data as its data source. This adapter knows
- * how to create list items for each row of pet data in the {@link Cursor}.
+ * that uses a {@link Cursor} of item data as its data source. This adapter knows
+ * how to create list items for each row of item data in the {@link Cursor}.
  */
 public class InventoryCursorAdapter extends CursorAdapter {
 
     private static final String LOG_TAG = "InventoryCursorActivity";
-
-    private Uri mCurrentItemUri;
 
     /**
      * Constructs a new {@link InventoryCursorAdapter}.
@@ -57,8 +53,8 @@ public class InventoryCursorAdapter extends CursorAdapter {
     }
 
     /**
-     * This method binds the pet data (in the current row pointed to by cursor) to the given
-     * list item layout. For example, the name for the current pet can be set on the name TextView
+     * This method binds the item data (in the current row pointed to by cursor) to the given
+     * list item layout. For example, the name for the current item can be set on the name TextView
      * in the list item layout.
      *
      * @param view    Existing view, returned earlier by newView() method
@@ -79,7 +75,10 @@ public class InventoryCursorAdapter extends CursorAdapter {
         int nameColumnIndex = cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_NAME);
         int priceColumnIndex = cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_PRICE);
         final int quantityColumnIndex = cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_QUANTITY);
+        int rowColumnIndex = cursor.getColumnIndex(InventoryTable._ID);
 
+
+        final int rowId = cursor.getInt(rowColumnIndex);
         int price = cursor.getInt(priceColumnIndex);
         String price_text = Integer.toString(price);
 
@@ -92,11 +91,6 @@ public class InventoryCursorAdapter extends CursorAdapter {
             @Override
             public void onClick(View v) {
 
-//                int interimQuantity = quantity;
-//                int newQuantity = interimQuantity--;
-
-                int currentQuantityColumnIndex = cursor.getInt(cursor.getColumnIndex(InventoryTable.COLUMN_PRODUCT_QUANTITY));
-//                int currentQuantity = cursor.getInt(currentQuantityColumnIndex);
                 String value = quantityTextView.getText().toString();
                 int currentQuantity = Integer.parseInt(value);
                 Log.e(LOG_TAG, "The currentQuantity is: " + currentQuantity);
@@ -110,20 +104,16 @@ public class InventoryCursorAdapter extends CursorAdapter {
                     ContentValues values = new ContentValues();
                     values.put(InventoryTable.COLUMN_PRODUCT_QUANTITY, updatedQuantity);
 
-                    // Defines selection criteria for the rows you want to update
-                    String mSelectionClause = InventoryTable.COLUMN_PRODUCT_QUANTITY + "=?";
-                    String[] mSelectionArgs = {"2"};
-
                     /**
                      *  Sets the updated value and updates the selected words.
                      */
 //                    values.putNull(InventoryTable.COLUMN_PRODUCT_QUANTITY);
-
+                    Uri mCurrentProductUri = ContentUris.withAppendedId(InventoryTable.CONTENT_URI, rowId);
                     int mRowsUpdated = context.getContentResolver().update(
-                            InventoryTable.CONTENT_URI,
+                            mCurrentProductUri,
                             values,
-                            mSelectionClause,
-                            mSelectionArgs);
+                            null,
+                            null);
                     Toast.makeText(context, "Row: " + mRowsUpdated + " new quantity is " + updatedQuantity, Toast.LENGTH_SHORT).show();
 
                     String newTextQuantity = Integer.toString(updatedQuantity);
@@ -133,7 +123,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
             }
         });
 
-        // Read the inventory attributes from the Cursor for the current pet
+        // Read the inventory attributes from the Cursor for the current item
         String itemName = cursor.getString(nameColumnIndex);
 
         // If the item price is empty string or null, then use some default text
@@ -148,7 +138,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
             quantity_text = context.getString(R.string.no_stock);
         }
 
-        // Update the TextViews with the attributes for the current pet
+        // Update the TextViews with the attributes for the current item
         nameTextView.setText(itemName);
         priceTextView.setText(price_text);
         quantityTextView.setText(quantity_text);

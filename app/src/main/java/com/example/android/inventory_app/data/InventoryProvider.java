@@ -13,17 +13,17 @@ import com.example.android.inventory_app.data.EntryDbHelper;
 import com.example.android.inventory_app.data.InventoryContract;
 
 /**
- * {@link ContentProvider} for Pets app.
+ * {@link ContentProvider} for Items app.
  */
 public class InventoryProvider extends ContentProvider {
 
     /** Tag for the log messages */
     public static final String LOG_TAG = InventoryProvider.class.getSimpleName();
 
-    /** URI matcher code for the content URI for the pets table */
+    /** URI matcher code for the content URI for the items table */
     private static final int ITEMS = 100;
 
-    /** URI matcher code for the content URI for a single pet in the pets table */
+    /** URI matcher code for the content URI for a single item in the items table */
     private static final int ITEM_ID = 101;
 
     /**
@@ -69,9 +69,9 @@ public class InventoryProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match) {
             case ITEMS:
-                // For the PETS code, query the inventory table directly with the given
+                // For the ITEMS code, query the inventory table directly with the given
                 // projection, selection, selectionArgs and sort order.  The cursor
-                // could contain multiple rows of the pets table.
+                // could contain multiple rows of the items table.
                 cursor = database.query(InventoryContract.InventoryTable.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
@@ -109,7 +109,7 @@ public class InventoryProvider extends ContentProvider {
     }
 
     /**
-     * Insert a pet into the database with the given content values. Return the new content URI
+     * Insert an item into the database with the given content values. Return the new content URI
      * for that specific row in the database.
      */
     private Uri insertItem(Uri uri, ContentValues values) {
@@ -142,7 +142,7 @@ public class InventoryProvider extends ContentProvider {
         // Get writable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
-        // Insert the new pet with the given values
+        // Insert the new item with the given values
         long id = database.insert(InventoryContract.InventoryTable.TABLE_NAME, null, values);
 
         // If the ID is -1, then the insertion failed. Log an error and return null.
@@ -151,7 +151,7 @@ public class InventoryProvider extends ContentProvider {
             return null;
         }
 
-        // Notify all listeners that the data has changed for the pet content URI
+        // Notify all listeners that the data has changed for the item content URI
         getContext().getContentResolver().notifyChange(uri, null);
 
         // Once we know the ID of the new row in the table,
@@ -170,7 +170,7 @@ public class InventoryProvider extends ContentProvider {
             case ITEMS:
                 return updateItem(uri, contentValues, selection, selectionArgs);
             case ITEM_ID:
-                // For the PET_ID code, extract out the ID from the URI,
+                // For the ITEM_ID code, extract out the ID from the URI,
                 // so we know which row to update. Selection will be "_id=?" and selection
                 // arguments will be a String array containing the actual ID.
                 selection = InventoryContract.InventoryTable._ID + "=?";
@@ -182,8 +182,8 @@ public class InventoryProvider extends ContentProvider {
     }
 
     /**
-     * Update pets in the database with the given content values. Apply the changes to the rows
-     * specified in the selection and selection arguments (which could be 0 or 1 or more pets).
+     * Update items in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more items).
      * Return the number of rows that were successfully updated.
      */
     private int updateItem(Uri uri, ContentValues values, String selection, String[] selectionArgs) {

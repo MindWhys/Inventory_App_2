@@ -14,6 +14,12 @@
     <!-- Label for the editor menu option to save entry and leave editor [CHAR LIMIT=20] -->
     <string name="action_save">Save</string>
 
+    <!-- Label for the editor menu option to save entry and leave editor [CHAR LIMIT=20] -->
+    <string name="action_discard_item">Discard item</string>
+
+    <!-- Label for the editor menu option to save entry and leave editor [CHAR LIMIT=20] -->
+    <string name="action_continue_creating">Continue Creating</string>
+
     <!-- Label for the editor overflow menu option that deletes the current pet [CHAR LIMIT=20 -->
     <string name="action_delete">Delete</string>
 
@@ -61,6 +67,9 @@
 
     <!-- Dialog message when user is leaving editor but hasn't saved changes [CHAR LIMIT=NONE] -->
     <string name="unsaved_changes_dialog_msg">Discard your changes and quit editing?</string>
+
+    <!-- Dialog message when user is leaving editor but hasn't saved changes [CHAR LIMIT=NONE] -->
+    <string name="save_dialog_msg">Required text fields still blank.</string>
 
     <!-- Dialoge button text for the option to discard a user's changes [CHAR LIMIT=20] -->
     <string name="discard">Discard</string>
